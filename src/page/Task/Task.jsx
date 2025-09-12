@@ -10,6 +10,10 @@ export default function Task() {
   const [value, key, setLocalStorage, getLocalStirage, removeLocalStorage] =
     useLocalStorage();
 
+    useEffect(() => {
+      const data = getLocalStirage("todo");
+      setTodoList(data);
+    }, []);
   const addTodo = () => {
     Swal.fire({
       title: "Enter Name Todo:",
@@ -19,6 +23,8 @@ export default function Task() {
       confirmButtonText: "confirm",
     }).then((result) => {
       if (result.isConfirmed) {
+        console.log(todoList)
+        console.log(result)
         const newTodo = {
           id: todoList.length + 1,
           name: result.value,
@@ -34,11 +40,6 @@ export default function Task() {
       }
     });
   };
-
-  useEffect(() => {
-    const data = getLocalStirage("todo");
-    setTodoList(data);
-  }, []);
   return (
     <div className="w-full">
       <div className="bg-[#D9D9D9] w-full p-4">
@@ -48,7 +49,7 @@ export default function Task() {
         <AddTask addTodo={addTodo} />
       </div>
       <div className="py-10 px-30">
-        <TableData data={value} />
+        <TableData todoList={todoList} setTodoList={setTodoList} />
       </div>
     </div>
   );

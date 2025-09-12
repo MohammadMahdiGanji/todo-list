@@ -5,24 +5,28 @@ import { MdRemoveDone } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "../../Hooks/useLocalStorage";
 
-export default function TableData({ data }) {
-  const [todoList, setTodoList] = useState([]);
-
+export default function TableData({ todoList, setTodoList }) {
   const [value, key, setLocalStorage, getLocalStirage, removeLocalStorage] =
     useLocalStorage();
-
-  useEffect(() => {
-    setTodoList(data);
-  }, [data]);
-
-  useEffect(() => {
-    setLocalStorage("todo", todoList);
-  }, [todoList]);
 
   const removeData = (id) => {
     const result = todoList.filter((item) => item.id !== id);
     setLocalStorage("todo", result);
     setTodoList(result);
+  };
+
+  const clickImportant = (id) => {
+    const newTodoList = [];
+
+    todoList.forEach((item) => {
+      if (item.id == id) {
+        item.isImportant = !item.isImportant;
+      }
+      newTodoList.push(item);
+    });
+
+    setLocalStorage("todo", newTodoList);
+    setTodoList(newTodoList);
   };
 
   return (
@@ -38,18 +42,24 @@ export default function TableData({ data }) {
         </tr>
       </thead>
       <tbody>
-        {todoList.map((item) => (
+        {todoList.map((item, index) => (
           <tr
             key={item.id}
             className="odd:bg-[#ccdfd8] border-b-1 border-[rgba(0,0,0,0.2)]"
           >
-            <td className="p-2 text-center">{item.id}</td>
+            <td className="p-2 text-center">{index + 1}</td>
             <td className="p-2 text-center">{item.name}</td>
             <td className="p-2 text-center">
-              {item.important ? (
-                <GoStarFill className="text-amber-400 ms-auto cursor-pointer text-2xl" />
+              {item.isImportant ? (
+                <GoStarFill
+                  className="text-amber-400 mx-auto cursor-pointer text-2xl"
+                  onClick={() => clickImportant(item.id)}
+                />
               ) : (
-                <FaRegStar className="text-amber-400 mx-auto cursor-pointer text-2xl" />
+                <FaRegStar
+                  className="text-amber-400 mx-auto cursor-pointer text-2xl"
+                  onClick={() => clickImportant(item.id)}
+                />
               )}
             </td>
             <td className="p-2 text-center">
